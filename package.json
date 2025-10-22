@@ -12,9 +12,10 @@
     },
     "dependencies": {
         "@tryforge/forgescript": "^2.5.0",
-        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.52.0"
+        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
     },
     "files": [
         "src/"
     ]
 }
+
