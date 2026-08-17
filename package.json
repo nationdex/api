@@ -2,20 +2,27 @@
     "name": "@quoriel/api",
     "description": "ForgeScript extension for building fast and scalable HTTP APIs using uWebSockets.js",
     "version": "1.5.2",
-    "main": "src/main.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/"
+    ],
     "author": "Mlad (https://github.com/eolthar)",
     "repository": "https://github.com/quoriel/api",
     "license": "GPL-3.0",
     "scripts": {
-        "postinstall": "node src/cleanup.js",
-        "docgen": "node src/docgen.js"
+        "build": "tsc",
+        "prepublishOnly": "npm run build",
+        "postinstall": "node -e \"if (require('fs').existsSync('./dist/cleanup.js')) require('./dist/cleanup.js')\"",
+        "docgen": "node dist/docgen.js"
     },
     "dependencies": {
         "@tryforge/forgescript": "^2.5.0",
         "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
     },
-    "files": [
-        "src/"
-    ]
+    "devDependencies": {
+        "@types/node": "^26.0.1",
+        "typescript": "^6.0.3"
+    }
 }
 
