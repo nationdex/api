@@ -32,7 +32,7 @@ export interface RouteDefinition {
     throttle?: boolean;
 }
 
-export interface QuorielApiOptions {
+export interface ApiOptions {
     path?: string;
     port?: number | string;
     throttle?: boolean | ThrottleOptions;
@@ -63,7 +63,7 @@ const methods: Record<string, string> = {
     ANY: "any"
 };
 
-export async function initializer(options: QuorielApiOptions = {}, instance: ForgeClient): Promise<void> {
+export async function initializer(options: ApiOptions = {}, instance: ForgeClient): Promise<void> {
     if (options.path) path = join(process.cwd(), options.path);
     if (!path) return;
     if (options.throttle) {
@@ -138,7 +138,7 @@ function registerRoute(route: RouteDefinition): void {
     const url = route.url.startsWith("/") ? route.url : "/" + route.url;
     const code = Compiler.compile(route.code);
     let handler: (response: uWS.HttpResponse, request: uWS.HttpRequest) => void | Promise<void> = async (response, request) => {
-        response.onAborted(() => {});
+        response.onAborted(() => { });
         try {
             await Interpreter.run({ obj: {}, command: null, client: client!, data: code, extras: { response, request } });
         } catch (error) {

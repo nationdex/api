@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuorielApi = void 0;
+exports.Api = void 0;
 const forgescript_1 = require("@tryforge/forgescript");
 const api_1 = require("./api");
 const pkg = require("../package.json");
-class QuorielApi extends forgescript_1.ForgeExtension {
-    name = "QuorielApi";
+class Api extends forgescript_1.ForgeExtension {
+    name = "Api";
     description = pkg.description;
     version = pkg.version;
     options;
@@ -18,4 +18,4 @@ class QuorielApi extends forgescript_1.ForgeExtension {
         (0, api_1.initializer)(this.options, client);
     }
 }
-exports.QuorielApi = QuorielApi;
+exports.Api = Api;

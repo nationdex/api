@@ -1,5 +1,5 @@
 {
-    "name": "@quoriel/api",
+    "name": "@nationdex/api",
     "description": "ForgeScript extension for building fast and scalable HTTP APIs using uWebSockets.js",
     "version": "1.5.2",
     "main": "dist/index.js",
@@ -7,8 +7,8 @@
     "files": [
         "dist/"
     ],
-    "author": "Mlad (https://github.com/eolthar)",
-    "repository": "https://github.com/quoriel/api",
+    "author": "Mlad (https://github.com/nationdex)",
+    "repository": "https://github.com/nationdex/api",
     "license": "GPL-3.0",
     "scripts": {
         "build": "tsc",

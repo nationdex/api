@@ -25,7 +25,7 @@ export interface RouteDefinition {
     allowed?: boolean | RouteAllowedOptions;
     throttle?: boolean;
 }
-export interface QuorielApiOptions {
+export interface ApiOptions {
     path?: string;
     port?: number | string;
     throttle?: boolean | ThrottleOptions;
@@ -33,5 +33,5 @@ export interface QuorielApiOptions {
     allowed?: AllowedOptions;
     ssl?: uWS.AppOptions;
 }
-export declare function initializer(options: QuorielApiOptions | undefined, instance: ForgeClient): Promise<void>;
+export declare function initializer(options: ApiOptions | undefined, instance: ForgeClient): Promise<void>;
 export declare function updateRoutes(): Promise<void>;

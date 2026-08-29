@@ -1,10 +1,10 @@
 import { ForgeExtension, ForgeClient } from "@tryforge/forgescript";
-import { QuorielApiOptions } from "./api";
-export declare class QuorielApi extends ForgeExtension {
+import { ApiOptions } from "./api";
+export declare class Api extends ForgeExtension {
     name: string;
     description: string;
     version: string;
-    options: QuorielApiOptions;
-    constructor(options?: QuorielApiOptions);
+    options: ApiOptions;
+    constructor(options?: ApiOptions);
     init(client: ForgeClient): void;
 }

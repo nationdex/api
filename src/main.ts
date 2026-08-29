@@ -1,15 +1,15 @@
 import { ForgeExtension, ForgeClient } from "@tryforge/forgescript";
-import { initializer, QuorielApiOptions } from "./api";
+import { initializer, ApiOptions } from "./api";
 
 const pkg = require("../package.json");
 
-export class QuorielApi extends ForgeExtension {
-    public name = "QuorielApi";
+export class Api extends ForgeExtension {
+    public name = "Api";
     public description: string = pkg.description;
     public version: string = pkg.version;
-    public options: QuorielApiOptions;
+    public options: ApiOptions;
 
-    public constructor(options: QuorielApiOptions = {}) {
+    public constructor(options: ApiOptions = {}) {
         super();
         this.options = options;
     }
