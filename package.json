@@ -1,28 +1,33 @@
 {
     "name": "@nationdex/api",
-    "description": "ForgeScript extension for building fast and scalable HTTP APIs using uWebSockets.js",
-    "version": "1.5.2",
+    "version": "1.0.0",
+    "description": "API extension for Project Nationdex 2.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "files": [
-        "dist/"
-    ],
-    "author": "Mlad (https://github.com/nationdex)",
-    "repository": "https://github.com/nationdex/api",
+    "author": "nationdex",
     "license": "GPL-3.0",
     "scripts": {
         "build": "tsc",
         "prepublishOnly": "npm run build",
-        "postinstall": "node -e \"if (require('fs').existsSync('./dist/cleanup.js')) require('./dist/cleanup.js')\"",
-        "docgen": "node dist/docgen.js"
+        "postinstall": "node -e \"if (require('fs').existsSync('./dist/cleanup.js')) require('./dist/cleanup.js')\""
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/nationdex/api.git"
+    },
+    "bugs": {
+      "url": "https://github.com/nationdex/api/issues"
+    },
+    "homepage": "https://github.com/nationdex/api#readme",
+    "engines": {
+      "node": ">=16.11.0"
     },
     "dependencies": {
-        "@tryforge/forgescript": "^2.5.0",
         "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
     },
     "devDependencies": {
+        "@tryforge/forgescript": "^2.5.0",
         "@types/node": "^26.0.1",
         "typescript": "^6.0.3"
     }
 }
-

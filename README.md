@@ -1,139 +1,121 @@
-# QuorielAPI
-A high-performance extension for ForgeScript that provides a reliable and scalable way to build HTTP APIs using uWebSockets.js.
+# @nationdex/api
+
+A ForgeScript extension that runs a fast HTTP server powered by `uWebSockets.js`. It lets you create API routes that run ForgeScript code.
+
+[![discord](https://img.shields.io/discord/1321001945738971167?color=5865F2&label=Discord&logo=discord)](https://discord.com/invite/WCdk6CSKKz)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://github.com/nationdex/api/blob/main/LICENSE)
+
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+  - [Extension Options](#extension-options)
+  - [Throttle Options](#throttle-options)
+  - [Access Control Options](#access-control-options)
+  - [Route Options](#route-options)
+  - [Other / Utilities](#other--utilities)
+
+---
 
 ## Installation
-```
-npm i @quoriel/api uNetworking/uWebSockets.js#v20.55.0
-```
 
-## Connection
-```js
-const { ForgeClient } = require("@tryforge/forgescript");
-const { QuorielApi } = require("@quoriel/api");
+Run this in your project root:
 
-const client = new ForgeClient({
-    extensions: [
-        new QuorielApi({
-            port: 3000,        // HTTP server port (default: 3000)
-            path: "routes",    // Routes directory path
-            cacheIP: 10000,    // Cache up to 10,000 converted IP addresses (optional)
-            ssl: {             // SSL options for HTTPS (optional)
-                cert_file_name: "cert.pem",
-                key_file_name: "key.pem"
-            },
-            allowed: {         // Global access control (optional)
-                hosts: ["api.quoriel.com"],
-                ips: {
-                    white: ["243.117.6.40", "198.140.170.153"],
-                    black: ["30.164.62.195"]
-                },
-                headers: {
-                    "Authorization": "Bearer your-token-here"
-                }
-            },
-            throttle: {        // Rate limiting and burst protection (optional)
-                rateWindowMs: 120000,
-                rateMaxRequests: 75,
-                blockDuration: 365000
-            }
-        })
-    ]
+```bash
+npm install github:nationdex/api
+
+---
+
+## Getting Started
+
+Add the `Api` extension to your ForgeClient:
+
+```ts
+import { ForgeClient } from "@tryforge/forgescript";
+import { Api } from "@nationdex/api";
+
+const api = new Api({
+    path: "dist/routes",
+    port: 3000
 });
 
-client.login("...");
+const client = new ForgeClient({
+    events: ["clientReady"],
+    extensions: [api]
+});
+
+client.login("YOUR_BOT_TOKEN");
 ```
 
-## Cache
-Caching of converted IP addresses for performance optimization.
+When your client starts, the extension loads all route files inside the `./routes` folder and starts the server on port 3000.
 
-```js
-cacheIP: 10000  // Cache up to 10,000 converted IP addresses (optional)
-```
+---
 
-> [!TIP]
-> IP caching significantly improves performance by storing IP addresses in string format, avoiding repeated conversions from binary buffers.
 
-## SSL
-For HTTPS support, provide SSL options. If SSL options are present, the server will use `SSLApp`, otherwise it will use regular `App`.
+## Configuration
 
-```js
-ssl: {
-    cert_file_name: "path/to/cert.pem",     // SSL certificate file
-    key_file_name: "path/to/key.pem",       // Private key file
-    passphrase: "your_passphrase",          // Password for encrypted private key
-    ca_file_name: "path/to/ca.pem",         // Certificate Authority chain file
-    ssl_ciphers: "ECDHE-RSA-AES128-...",    // Allowed SSL cipher suites
-    ssl_prefer_low_memory_usage: true       // Optimize for lower memory usage
-}
-```
+### Extension Options
 
-> [!TIP]
-> **Available SSL options:** See [uWebSockets.js AppOptions](https://unetworking.github.io/uWebSockets.js/generated/interfaces/AppOptions.html)
+Pass these to `new Api(options)`:
 
-## Allowed
-Access control mechanism for routes that can be configured globally or for individual routes.
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `port` | `number \| string` | `3000` | Port to run the server on. |
+| `path` | `string` | `undefined` | Folder containing route files (relative to current working directory). |
+| `throttle` | `boolean \| ThrottleOptions` | `false` | Enable rate limiting or configure throttle settings. |
+| `cacheIP` | `number \| string` | `10000` | Size of the LRU cache for converted IP addresses. |
+| `allowed` | `AllowedOptions` | `{}` | Global IP, host, and header restrictions. |
+| `ssl` | `uWS.AppOptions` | `{}` | SSL certificate and key paths if running HTTPS. |
 
-```js
-allowed: {
-    hosts: [],        // Array of allowed hostnames
+### Throttle Options
+
+When setting `throttle: { ... }`:
+
+| Option | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `rateWindowMs` | `number` | `60000` | Time window for regular requests in milliseconds. |
+| `rateMaxRequests` | `number` | `60` | Max requests allowed in the `rateWindowMs`. |
+| `burstWindowMs` | `number` | `1000` | Short time window to catch bursts. |
+| `burstMaxRequests` | `number` | `3` | Max requests allowed in the `burstWindowMs`. |
+| `blockDuration` | `number` | `600000` | How long an IP stays blocked (burst blocks double this). |
+| `cleanupIntervalMs` | `number` | `180000` | How often expired tracking data is cleaned up. |
+| `maxTrackedIPs` | `number` | `1500` | Max tracked IPs stored in memory. |
+| `logBlocks` | `boolean` | `false` | Log a warning when an IP gets blocked. |
+
+### Access Control Options
+
+Can be set globally on `Api` options or per route:
+
+```javascript
+{
+    hosts: ["example.com", "api.example.com"],
     ips: {
-        white: [],    // Only these IPs are allowed
-        black: []     // These IPs are blocked
+        white: ["127.0.0.1", "::1"],
+        black: ["192.168.1.100"]
     },
-    headers: {}       // Required request headers
+    headers: {
+        "authorization": "Bearer secret-token"
+    }
 }
 ```
 
-### Structure (Route)
-- **false** - disable access control for this route
-- **true** or (if not specified at all) - use global rules only
-- **{ merge: true, ... }** - merge route settings with global rules (route takes priority)
-- **{ ... }** - apply route settings only (ignore global)
+### Route Options
 
-## Throttle
-Request rate limiting and burst protection to prevent abuse and automated attacks.
+Each route object accepts:
 
-```js
-throttle: {
-    rateWindowMs: 60000,          // Rate limit window duration (default: 60000ms = 1 minute)
-    rateMaxRequests: 60,          // Max requests per rate window (default: 60)
-    burstWindowMs: 1000,          // Burst detection window duration (default: 1000ms = 1 second)
-    burstMaxRequests: 3,          // Max requests per burst window (default: 3)
-    blockDuration: 600000,        // Block duration in milliseconds (default: 600000ms = 10 minutes)
-    cleanupIntervalMs: 180000,    // Cleanup interval for tracking data (default: 180000ms = 3 minutes)
-    maxTrackedIPs: 1500,          // Maximum IPs to track simultaneously (default: 1500)
-    logBlocks: false              // Log blocked IPs to console (default: false)
-}
-```
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `url` | `string` | Yes | Path to match, like `"/hello"` or `"/user/:id"`. |
+| `method` | `string` | Yes | HTTP method (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `OPTIONS`, `HEAD`, `TRACE`, `CONNECT`, `ANY`). |
+| `code` | `string` | Yes | ForgeScript code string to run for the route. |
+| `allowed` | `boolean \| RouteAllowedOptions` | No | Set `false` to disable access checks, or supply route-specific allowed rules (with optional `merge: true`). |
+| `throttle` | `boolean` | No | Set `false` to skip rate limiting on this specific route. |
 
-### How it works
-The throttle system uses two-layer protection:
+---
 
-1. **Rate Limiting** - tracks total requests over a longer time window (e.g., 60 requests per minute)
-2. **Burst Protection** - detects rapid request spikes in short intervals (e.g., 3 requests per second)
+## License
 
-> [!IMPORTANT]
-> When limits are exceeded, the IP is automatically blocked for a configured duration. Burst violations result in 2x longer blocks.
-
-### Structure
-- **false** - disable throttle completely
-- **true** - enable with default settings
-- **{ ... }** - enable with custom parameters
-
-> [!NOTE]
-> Individual routes can only enable or disable throttle using `throttle: false` or `throttle: true` in the route definition. Custom throttle parameters cannot be configured per route, only globally.
-
-## Routes
-Each route is defined as a module inside the `routes` directory.
-
-```js
-module.exports = {
-    url: "/*",
-    method: "GET",
-    code: `$sendText[Hello world!]`
-};
-```
-
-### Supported methods
-
-`GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `OPTIONS`, `HEAD`, `TRACE`, `CONNECT`, `ANY`
+This project is licensed under the [GPL-3.0 License](LICENSE).
