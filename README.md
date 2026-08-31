@@ -31,13 +31,13 @@ npm install github:nationdex/api
 
 ## Getting Started
 
-Add the `Api` extension to your ForgeClient:
+Add the `API` extension to your ForgeClient:
 
 ```ts
 import { ForgeClient } from "@tryforge/forgescript";
-import { Api } from "@nationdex/api";
+import { API } from "@nationdex/api";
 
-const api = new Api({
+const api = new API({
     path: "dist/routes",
     port: 3000
 });
@@ -59,7 +59,7 @@ When your client starts, the extension loads all route files inside the `./route
 
 ### Extension Options
 
-Pass these to `new Api(options)`:
+Pass these to `new API(options)`:
 
 | Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
@@ -87,7 +87,7 @@ When setting `throttle: { ... }`:
 
 ### Access Control Options
 
-Can be set globally on `Api` options or per route:
+Can be set globally on `API` options or per route:
 
 ```javascript
 {

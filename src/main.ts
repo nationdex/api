@@ -1,15 +1,15 @@
 import { ForgeExtension, ForgeClient } from "@tryforge/forgescript";
-import { initializer, ApiOptions } from "./api";
+import { initializer, APIOptions } from "./api";
 
 const pkg = require("../package.json");
 
-export class Api extends ForgeExtension {
-    public name = "Api";
+export class API extends ForgeExtension {
+    public name = "API";
     public description: string = pkg.description;
     public version: string = pkg.version;
-    public options: ApiOptions;
+    public options: APIOptions;
 
-    public constructor(options: ApiOptions = {}) {
+    public constructor(options: APIOptions = {}) {
         super();
         this.options = options;
     }

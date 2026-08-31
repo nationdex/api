@@ -32,7 +32,7 @@ export interface RouteDefinition {
     throttle?: boolean;
 }
 
-export interface ApiOptions {
+export interface APIOptions {
     path?: string;
     port?: number | string;
     throttle?: boolean | ThrottleOptions;
@@ -63,7 +63,7 @@ const methods: Record<string, string> = {
     ANY: "any"
 };
 
-export async function initializer(options: ApiOptions = {}, instance: ForgeClient): Promise<void> {
+export async function initializer(options: APIOptions = {}, instance: ForgeClient): Promise<void> {
     if (options.path) path = join(process.cwd(), options.path);
     if (!path) return;
     if (options.throttle) {

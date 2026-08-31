@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Api = void 0;
+exports.API = void 0;
 const forgescript_1 = require("@tryforge/forgescript");
 const api_1 = require("./api");
 const pkg = require("../package.json");
-class Api extends forgescript_1.ForgeExtension {
-    name = "Api";
+class API extends forgescript_1.ForgeExtension {
+    name = "API";
     description = pkg.description;
     version = pkg.version;
     options;
@@ -18,4 +18,4 @@ class Api extends forgescript_1.ForgeExtension {
         (0, api_1.initializer)(this.options, client);
     }
 }
-exports.Api = Api;
+exports.API = API;

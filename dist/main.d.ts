@@ -1,10 +1,10 @@
 import { ForgeExtension, ForgeClient } from "@tryforge/forgescript";
-import { ApiOptions } from "./api";
-export declare class Api extends ForgeExtension {
+import { APIOptions } from "./api";
+export declare class API extends ForgeExtension {
     name: string;
     description: string;
     version: string;
-    options: ApiOptions;
-    constructor(options?: ApiOptions);
+    options: APIOptions;
+    constructor(options?: APIOptions);
     init(client: ForgeClient): void;
 }
