@@ -11,6 +11,7 @@
         "prepublishOnly": "npm run build",
         "postinstall": "node -e \"if (require('fs').existsSync('./dist/cleanup.js')) require('./dist/cleanup.js')\""
     },
+    "files": ["dist"],
     "repository": {
       "type": "git",
       "url": "git+https://github.com/nationdex/api.git"
