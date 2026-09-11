@@ -1,8 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.streamFile = streamFile;
+/// <reference types="bun-types" />
 const promises_1 = require("fs/promises");
+const bun_1 = require("./server/bun");
 async function streamFile(response, path, headers) {
+    if (response instanceof bun_1.BunHttpResponse)
+        return streamFileBun(response, path, headers);
+    return streamFileUws(response, path, headers);
+}
+async function streamFileBun(response, path, headers) {
+    const file = Bun.file(path);
+    if (!(await file.exists())) {
+        response.end("File not found");
+        return;
+    }
+    const keys = Object.keys(headers);
+    for (let i = 0; i < keys.length; i++)
+        response.writeHeader(keys[i], headers[keys[i]]);
+    response.writeHeader("Content-Length", file.size.toString());
+    response.endWithBody(file);
+}
+async function streamFileUws(response, path, headers) {
     let file;
     let aborted = false;
     response.onAborted(() => (aborted = true));
@@ -50,3 +69,4 @@ async function streamFile(response, path, headers) {
         await file?.close();
     }
 }
+//# sourceMappingURL=file.js.map

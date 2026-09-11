@@ -21,14 +21,16 @@
     },
     "homepage": "https://github.com/nationdex/api#readme",
     "engines": {
-      "node": ">=16.11.0"
+      "node": ">=16.11.0",
+      "bun": ">=1.0.0"
     },
-    "dependencies": {
-        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
+    "optionalDependencies": {
+        "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.69.0"
     },
     "devDependencies": {
         "@tryforge/forgescript": "^2.5.0",
         "@types/node": "^26.0.1",
+        "bun-types": "^1.2.0",
         "typescript": "^6.0.3"
     }
 }

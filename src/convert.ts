@@ -11,7 +11,8 @@ export function cacheIP(count?: number | string): void {
     max = +(count ?? 10000);
 }
 
-export function convertIP(buffer: ArrayBuffer | Uint8Array): string | null {
+export function convertIP(buffer: ArrayBuffer | Uint8Array | string): string | null {
+    if (typeof buffer === "string") return buffer || null;
     const from = Buffer.from(buffer as ArrayBuffer);
     if (!cache) return parseIP(from);
     const key = from.toString("hex");

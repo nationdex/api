@@ -33,34 +33,34 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isBun = void 0;
 exports.initializer = initializer;
 exports.updateRoutes = updateRoutes;
-const uWS = __importStar(require("uWebSockets.js"));
 const forgescript_1 = require("@tryforge/forgescript");
 const promises_1 = require("fs/promises");
 const path_1 = require("path");
 const convert_1 = require("./convert");
 const throttle_1 = require("./throttle");
+const methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD", "TRACE", "CONNECT", "ANY"];
 let app = null;
 let client = null;
 let port = 3000;
 let path = null;
-let socket = null;
 let throttle = false;
 let ssl = {};
 let allowed = {};
-const methods = {
-    GET: "get",
-    POST: "post",
-    PUT: "put",
-    DELETE: "del",
-    PATCH: "patch",
-    OPTIONS: "options",
-    HEAD: "head",
-    TRACE: "trace",
-    CONNECT: "connect",
-    ANY: "any"
-};
+// Bun ships Bun.serve() natively; anything else (Node via npm/pnpm) uses uWebSockets.js.
+// This is the only place that decides which backend loads - neither backend module is
+// ever statically imported, so the wrong one never even touches disk/ABI at runtime.
+exports.isBun = typeof globalThis.Bun !== "undefined";
+async function createApp() {
+    if (exports.isBun) {
+        const { BunApp } = await Promise.resolve().then(() => __importStar(require("./server/bun")));
+        return new BunApp();
+    }
+    const { UwsApp } = await Promise.resolve().then(() => __importStar(require("./server/uws")));
+    return new UwsApp(ssl);
+}
 async function initializer(options = {}, instance) {
     if (options.path)
         path = (0, path_1.join)(process.cwd(), options.path);
@@ -83,11 +83,9 @@ async function initializer(options = {}, instance) {
 async function updateRoutes() {
     if (!path)
         return;
-    if (socket) {
-        uWS.us_listen_socket_close(socket);
-        socket = null;
-    }
-    app = Object.keys(ssl).length ? uWS.SSLApp(ssl) : uWS.App();
+    if (app)
+        app.close();
+    app = await createApp();
     await loadRoutes();
     startServer();
 }
@@ -136,7 +134,7 @@ function validateRoute(route) {
         return false;
     if (typeof route.url !== "string" || typeof route.method !== "string" || typeof route.code !== "string")
         return false;
-    if (!Object.hasOwn(methods, route.method))
+    if (!methods.includes(route.method))
         return false;
     return true;
 }
@@ -239,17 +237,16 @@ function registerRoute(route) {
             old(response, request);
         };
     }
-    const methodName = methods[route.method];
-    app[methodName](url, handler);
+    app.addRoute(route.method, url, handler);
 }
 function startServer() {
     if (!app)
         return;
-    app.listen(port, (listen) => {
-        if (!listen) {
+    app.listen(port, (ok) => {
+        if (!ok) {
             forgescript_1.Logger.error(`Failed to start server on port ${port}`);
             process.exit(1);
         }
-        socket = listen;
     });
 }
+//# sourceMappingURL=api.js.map

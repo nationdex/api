@@ -15,6 +15,8 @@ function cacheIP(count) {
     max = +(count ?? 10000);
 }
 function convertIP(buffer) {
+    if (typeof buffer === "string")
+        return buffer || null;
     const from = Buffer.from(buffer);
     if (!cache)
         return parseIP(from);
@@ -250,3 +252,4 @@ function parseIP(fm) {
         re += ":";
     return re;
 }
+//# sourceMappingURL=convert.js.map

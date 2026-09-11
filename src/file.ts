@@ -1,7 +1,26 @@
+/// <reference types="bun-types" />
 import { open, FileHandle } from "fs/promises";
 import type { HttpResponse } from "uWebSockets.js";
+import { BunHttpResponse } from "./server/bun";
 
-export async function streamFile(response: HttpResponse, path: string, headers: Record<string, string>): Promise<void> {
+export async function streamFile(response: HttpResponse | BunHttpResponse, path: string, headers: Record<string, string>): Promise<void> {
+    if (response instanceof BunHttpResponse) return streamFileBun(response, path, headers);
+    return streamFileUws(response as HttpResponse, path, headers);
+}
+
+async function streamFileBun(response: BunHttpResponse, path: string, headers: Record<string, string>): Promise<void> {
+    const file = Bun.file(path);
+    if (!(await file.exists())) {
+        response.end("File not found");
+        return;
+    }
+    const keys = Object.keys(headers);
+    for (let i = 0; i < keys.length; i++) response.writeHeader(keys[i], headers[keys[i]]);
+    response.writeHeader("Content-Length", file.size.toString());
+    response.endWithBody(file);
+}
+
+async function streamFileUws(response: HttpResponse, path: string, headers: Record<string, string>): Promise<void> {
     let file: FileHandle | undefined;
     let aborted = false;
     response.onAborted(() => (aborted = true));
