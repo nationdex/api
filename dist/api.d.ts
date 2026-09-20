@@ -1,4 +1,4 @@
-import * as uWS from "uWebSockets.js";
+import type { AppOptions } from "uWebSockets.js";
 import { ForgeClient } from "@tryforge/forgescript";
 import { ThrottleOptions } from "./throttle";
 export interface AllowedOptions {
@@ -31,8 +31,9 @@ export interface APIOptions {
     throttle?: boolean | ThrottleOptions;
     cacheIP?: number | string;
     allowed?: AllowedOptions;
-    ssl?: uWS.AppOptions;
+    ssl?: AppOptions;
 }
+export declare const isBun: boolean;
 export declare function initializer(options: APIOptions | undefined, instance: ForgeClient): Promise<void>;
 export declare function updateRoutes(): Promise<void>;
 //# sourceMappingURL=api.d.ts.map

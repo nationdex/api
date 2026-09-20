@@ -1,9 +1,10 @@
-import * as uWS from "uWebSockets.js";
+import type { AppOptions } from "uWebSockets.js";
 import { Interpreter, Compiler, Logger, ForgeClient } from "@tryforge/forgescript";
 import { readdir, access } from "fs/promises";
 import { join } from "path";
 import { cacheIP, convertIP } from "./convert";
 import { setupThrottle, checkThrottle, ThrottleOptions } from "./throttle";
+import type { IAppBackend } from "./server/types";
 
 export interface AllowedOptions {
     hosts?: string[];
@@ -38,30 +39,32 @@ export interface APIOptions {
     throttle?: boolean | ThrottleOptions;
     cacheIP?: number | string;
     allowed?: AllowedOptions;
-    ssl?: uWS.AppOptions;
+    ssl?: AppOptions;
 }
 
-let app: uWS.TemplatedApp | null = null;
+const methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD", "TRACE", "CONNECT", "ANY"];
+
+let app: IAppBackend | null = null;
 let client: ForgeClient | null = null;
 let port = 3000;
 let path: string | null = null;
-let socket: uWS.us_listen_socket | null = null;
 let throttle = false;
-let ssl: uWS.AppOptions = {};
+let ssl: AppOptions = {};
 let allowed: AllowedOptions = {};
 
-const methods: Record<string, string> = {
-    GET: "get",
-    POST: "post",
-    PUT: "put",
-    DELETE: "del",
-    PATCH: "patch",
-    OPTIONS: "options",
-    HEAD: "head",
-    TRACE: "trace",
-    CONNECT: "connect",
-    ANY: "any"
-};
+// Bun ships Bun.serve() natively; anything else (Node via npm/pnpm) uses uWebSockets.js.
+// This is the only place that decides which backend loads - neither backend module is
+// ever statically imported, so the wrong one never even touches disk/ABI at runtime.
+export const isBun = typeof (globalThis as any).Bun !== "undefined";
+
+async function createApp(): Promise<IAppBackend> {
+    if (isBun) {
+        const { BunApp } = await import("./server/bun");
+        return new BunApp();
+    }
+    const { UwsApp } = await import("./server/uws");
+    return new UwsApp(ssl);
+}
 
 export async function initializer(options: APIOptions = {}, instance: ForgeClient): Promise<void> {
     if (options.path) path = join(process.cwd(), options.path);
@@ -80,11 +83,8 @@ export async function initializer(options: APIOptions = {}, instance: ForgeClien
 
 export async function updateRoutes(): Promise<void> {
     if (!path) return;
-    if (socket) {
-        uWS.us_listen_socket_close(socket);
-        socket = null;
-    }
-    app = Object.keys(ssl).length ? uWS.SSLApp(ssl) : uWS.App();
+    if (app) app.close();
+    app = await createApp();
     await loadRoutes();
     startServer();
 }
@@ -129,7 +129,7 @@ async function scanRoutes(poth: string): Promise<string[]> {
 function validateRoute(route: any): route is RouteDefinition {
     if (!route || typeof route !== "object") return false;
     if (typeof route.url !== "string" || typeof route.method !== "string" || typeof route.code !== "string") return false;
-    if (!Object.hasOwn(methods, route.method)) return false;
+    if (!methods.includes(route.method)) return false;
     return true;
 }
 
@@ -137,7 +137,7 @@ function registerRoute(route: RouteDefinition): void {
     if (!app) return;
     const url = route.url.startsWith("/") ? route.url : "/" + route.url;
     const code = Compiler.compile(route.code);
-    let handler: (response: uWS.HttpResponse, request: uWS.HttpRequest) => void | Promise<void> = async (response, request) => {
+    let handler: (response: any, request: any) => void | Promise<void> = async (response, request) => {
         response.onAborted(() => { });
         try {
             await Interpreter.run({ obj: {}, command: null, client: client!, data: code, extras: { response, request } });
@@ -227,17 +227,15 @@ function registerRoute(route: RouteDefinition): void {
             old(response, request);
         };
     }
-    const methodName = methods[route.method] as keyof uWS.TemplatedApp;
-    (app[methodName] as Function)(url, handler);
+    app.addRoute(route.method, url, handler);
 }
 
 function startServer(): void {
     if (!app) return;
-    app.listen(port, (listen: uWS.us_listen_socket | false) => {
-        if (!listen) {
+    app.listen(port, (ok: boolean) => {
+        if (!ok) {
             Logger.error(`Failed to start server on port ${port}`);
             process.exit(1);
         }
-        socket = listen;
     });
 }
