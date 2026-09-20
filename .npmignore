@@ -1,2 +1,4 @@
-dist
-tsconfig.ts
+src/
+tsconfig.json
+docs/
+metadata/

@@ -4,3 +4,4 @@ export * from "./throttle";
 export * from "./convert";
 export * from "./file";
 export * from "./mime";
+//# sourceMappingURL=index.d.ts.map

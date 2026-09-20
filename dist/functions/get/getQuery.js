@@ -22,3 +22,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.success(extras.request.getQuery(key));
     }
 });
+//# sourceMappingURL=getQuery.js.map

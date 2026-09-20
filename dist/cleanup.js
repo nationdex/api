@@ -31,3 +31,4 @@ function cleanup() {
     }
 }
 cleanup();
+//# sourceMappingURL=cleanup.js.map

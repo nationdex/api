@@ -20,3 +20,4 @@ __exportStar(require("./throttle"), exports);
 __exportStar(require("./convert"), exports);
 __exportStar(require("./file"), exports);
 __exportStar(require("./mime"), exports);
+//# sourceMappingURL=index.js.map

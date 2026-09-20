@@ -16,3 +16,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.successJSON(headers);
     }
 });
+//# sourceMappingURL=getHeaders.js.map

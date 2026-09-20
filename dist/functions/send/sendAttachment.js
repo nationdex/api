@@ -34,3 +34,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.success();
     }
 });
+//# sourceMappingURL=sendAttachment.js.map

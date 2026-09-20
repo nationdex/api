@@ -8,20 +8,27 @@
     "license": "GPL-3.0",
     "scripts": {
         "build": "tsc",
+        "docgen": "tsc && typedoc src/index.ts && node dist/docgen",
+        "commit": "npm run docgen && node dist/commit",
         "prepublishOnly": "npm run build",
         "postinstall": "node -e \"if (require('fs').existsSync('./dist/cleanup.js')) require('./dist/cleanup.js')\""
     },
-    "files": ["dist"],
+    "directories": {
+        "doc": "docs"
+    },
+    "files": [
+        "dist"
+    ],
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/nationdex/api.git"
+        "type": "git",
+        "url": "git+https://github.com/nationdex/api.git"
     },
     "bugs": {
-      "url": "https://github.com/nationdex/api/issues"
+        "url": "https://github.com/nationdex/api/issues"
     },
     "homepage": "https://github.com/nationdex/api#readme",
     "engines": {
-      "node": ">=16.11.0"
+        "node": ">=16.11.0"
     },
     "dependencies": {
         "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.55.0"
@@ -29,6 +36,7 @@
     "devDependencies": {
         "@tryforge/forgescript": "^2.5.0",
         "@types/node": "^26.0.1",
+        "typedoc": "^0.28.20",
         "typescript": "^6.0.3"
     }
 }

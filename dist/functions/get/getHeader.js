@@ -22,3 +22,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.success(extras.request.getHeader(key.toLowerCase()));
     }
 });
+//# sourceMappingURL=getHeader.js.map

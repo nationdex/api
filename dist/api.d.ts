@@ -35,3 +35,4 @@ export interface APIOptions {
 }
 export declare function initializer(options: APIOptions | undefined, instance: ForgeClient): Promise<void>;
 export declare function updateRoutes(): Promise<void>;
+//# sourceMappingURL=api.d.ts.map

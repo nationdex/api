@@ -13,3 +13,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.success((0, convert_1.convertIP)(extras.response.getProxiedRemoteAddress()));
     }
 });
+//# sourceMappingURL=getProxiedIP.js.map

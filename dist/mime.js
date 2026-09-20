@@ -920,3 +920,4 @@ exports.mime = new Map([
     [".zir", "application/vnd.zul"],
     [".zirz", "application/vnd.zul"]
 ]);
+//# sourceMappingURL=mime.js.map

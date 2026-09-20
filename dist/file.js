@@ -50,3 +50,4 @@ async function streamFile(response, path, headers) {
         await file?.close();
     }
 }
+//# sourceMappingURL=file.js.map

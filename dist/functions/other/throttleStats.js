@@ -12,3 +12,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.successJSON((0, throttle_1.throttleStats)());
     }
 });
+//# sourceMappingURL=throttleStats.js.map

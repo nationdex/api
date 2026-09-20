@@ -28,3 +28,4 @@ exports.default = new forgescript_1.NativeFunction({
         }));
     }
 });
+//# sourceMappingURL=getBody.js.map

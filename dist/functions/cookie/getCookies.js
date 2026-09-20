@@ -28,3 +28,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.successJSON(cookies);
     }
 });
+//# sourceMappingURL=getCookies.js.map

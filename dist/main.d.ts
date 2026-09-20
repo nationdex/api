@@ -8,3 +8,4 @@ export declare class API extends ForgeExtension {
     constructor(options?: APIOptions);
     init(client: ForgeClient): void;
 }
+//# sourceMappingURL=main.d.ts.map

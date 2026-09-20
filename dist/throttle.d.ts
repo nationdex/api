@@ -15,3 +15,4 @@ export declare function throttleStats(): {
     burstTracking: number;
     blockedIPs: number;
 };
+//# sourceMappingURL=throttle.d.ts.map

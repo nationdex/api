@@ -39,3 +39,4 @@ exports.default = new forgescript_1.NativeFunction({
         return this.success();
     }
 });
+//# sourceMappingURL=deleteCookie.js.map

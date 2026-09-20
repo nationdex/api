@@ -19,3 +19,4 @@ class API extends forgescript_1.ForgeExtension {
     }
 }
 exports.API = API;
+//# sourceMappingURL=main.js.map
