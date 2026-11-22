@@ -35,3 +35,24 @@ When the bot switches to the source entry point, remove its API function scan fr
 The old `ssl` option becomes `tls`. For certificates stored on disk, pass `{ cert: Bun.file(certPath), key: Bun.file(keyPath) }`. To reload routes programmatically, import and await `updateRoutes()`.
 
 The 1.x package and the original bot bundle configuration can be pinned together to roll back.
+
+### Browser clients
+
+CORS is opt-in and accepts exact HTTP(S) origins, either as a static list or an
+async provider resolved for each request. A path prefix can be one path or a
+list:
+
+```ts
+new API({
+  path: "src/api_routes",
+  cors: {
+    origins: async () => readApprovedOrigins(),
+    pathPrefix: ["/v1/extras", "/v1/discovery"],
+  },
+});
+```
+
+It allows GET, POST and DELETE requests with Authorization and Content-Type
+headers within the configured prefix. Credentials/cookies are not enabled.
+Requests without an Origin header still require authentication in the route;
+CORS is a browser policy, not an authorization mechanism.

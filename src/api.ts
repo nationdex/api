@@ -1,4 +1,5 @@
-import { BunApp } from "./server/bun";
+import { BunApp, type CorsOptions } from "./server/bun";
+export type { CorsOptions } from "./server/bun";
 import {
   Interpreter,
   Compiler,
@@ -8,7 +9,7 @@ import {
 import { readdir, access } from "fs/promises";
 import { join } from "path";
 import { cacheIP, convertIP } from "./convert";
-import { setupThrottle, checkThrottle, ThrottleOptions } from "./throttle";
+import { setupThrottle, checkThrottle, type ThrottleOptions } from "./throttle";
 
 export interface AllowedOptions {
   hosts?: string[];
@@ -44,6 +45,7 @@ export interface APIOptions {
   cacheIP?: number | string;
   allowed?: AllowedOptions;
   tls?: Bun.TLSOptions;
+  cors?: CorsOptions;
 }
 
 const methods = [
@@ -66,12 +68,14 @@ let path: string | null = null;
 let throttle = false;
 let tls: Bun.TLSOptions | undefined;
 let allowed: AllowedOptions = {};
+let cors: CorsOptions | undefined;
 
 export async function initializer(
   options: APIOptions = {},
   instance: ForgeClient,
 ): Promise<void> {
   if (options.path) path = join(process.cwd(), options.path);
+  cors = options.cors;
   if (!path) return;
   if (options.throttle) {
     throttle = true;
@@ -88,7 +92,7 @@ export async function initializer(
 export async function updateRoutes(): Promise<void> {
   if (!path) return;
   if (app) app.close();
-  app = new BunApp(tls);
+  app = new BunApp(tls, cors);
   await loadRoutes();
   startServer();
 }

@@ -4,7 +4,7 @@ import {
   FunctionManager,
   Logger,
 } from "@tryforge/forgescript";
-import { initializer, APIOptions } from "./api";
+import { initializer, type APIOptions } from "./api";
 
 import getBody from "./functions/get/getBody";
 import getHeader from "./functions/get/getHeader";
